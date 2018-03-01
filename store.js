@@ -2,7 +2,7 @@ import { createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import thunkMiddleware from "redux-thunk";
 import StellarSdk from "stellar-sdk";
-
+export const apiURL = process.env.NODE_ENV === "production" ? 'http://api.stellar.to/' : 'http://localhost:4000/';
 const stellarMeInitialState = {
   senderAccountDetails: {},
   senderAccountHistory: {},
@@ -89,7 +89,7 @@ export const getReceiverAccountDetails = (
   receiverUsername,
   receiverAmount
 ) => dispatch => {
-  fetch(`http://localhost:4000/users/${receiverUsername}`)
+  fetch(`${apiURL}users/${receiverUsername}`)
     .then(res => {
       console.log("res", res);
       return res.json();
@@ -236,7 +236,7 @@ export const getSenderAccountDetails = sourceSecretKey => dispatch => {
 
 export const addNewPairtoDB = (username, publicKey) => dispatch => {
   console.log(username, publicKey);
-  fetch("http://localhost:4000/users", {
+  fetch(`${apiURL}users`, {
     method: "POST",
     headers: {
       Accept: "application/json, text/plain, */*",

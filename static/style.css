@@ -62,7 +62,7 @@ footer {
   margin: 0 auto;
   transition: all .25s ease-out;
   background-size: contain;
-  background: url("https://www.paypalobjects.com/webstatic/paypalme/no_avatar.png") no-repeat center center;
+  background: url("/static/no_avatar.png") no-repeat center center;
   border-radius: 100%;
   background-size: cover;
   background-position: center center;

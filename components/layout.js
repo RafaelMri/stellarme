@@ -31,15 +31,15 @@ export default ({ children, title = "This is the default title", parentClassName
                 <span className="icon-bar"></span>
               </button>
               <Link href="/">
-                <a className="navbar-brand" href="/">Stellar Logo</a>
+                <a className="navbar-brand" href="/">Stellar.To</a>
               </Link>
             </div>
-            <div id="navbar" className="collapse navbar-collapse">
+            {/* <div id="navbar" className="collapse navbar-collapse">
               <ul className="nav navbar-nav">
                 <li><Link href="/"><a>Home</a></Link></li>
                 <li><Link href="/get-link"><a>Get My Link</a></Link></li>
               </ul>
-          </div>
+          </div> */}
           </div>
         </nav>
       </header>

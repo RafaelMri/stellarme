@@ -28,6 +28,10 @@ class StellarMe extends React.Component {
       enableTransferButton: false
     };
   }
+  static async getInitialProps({ query }) {
+    // const userAgent = req ? req.headers['user-agent'] : navigator.userAgent
+    return { query }
+  }
   componentDidMount() {
     console.log("cdm props", this.props);
     // if (
@@ -144,7 +148,7 @@ class StellarMe extends React.Component {
                         defaultValue={
                           this.state.receiverAccountDetails.receiverPublicAddress
                         }
-                        class="form-control"
+                        className="form-control"
                       />
                     </p>
                   ) : (
@@ -154,13 +158,13 @@ class StellarMe extends React.Component {
                     </p>
                   )}
                   <div className="amount-transfer text-center">
-                    <label class="sr-only">Amount to transfer</label>
+                    <label className="sr-only">Amount to transfer</label>
                     <input
                       type="number"
                       max={this.state.receiverAccountDetails.receiverAmount}
                       value={this.state.receiverAccountDetails.receiverAmount}
                       onChange={this.handleReceiverAmountChange}
-                      class="form-control text-center"
+                      className="form-control text-center"
                     />
                     <span>{this.state.receiverAccountDetails.receiverAssetType}</span>
                   </div>
@@ -184,7 +188,7 @@ class StellarMe extends React.Component {
                         type="text"
                         onChange={this.handleSecretKey}
                         value={this.state.secretKey}
-                        class="form-control text-center"
+                        className="form-control text-center"
                       />
                     </p>
                     <button

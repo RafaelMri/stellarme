@@ -25,7 +25,8 @@ class StellarMe extends React.Component {
         receiverAssetType: "XLM"
       },
       loaderInfo: {},
-      enableTransferButton: false
+      enableTransferButton: false,
+      transactionStep: 0,
     };
   }
   static async getInitialProps({ query }) {
@@ -123,13 +124,23 @@ class StellarMe extends React.Component {
   //     this.state.senderAccountHistory.records.map(item => <li>{item.fee_paid} on {item.created_at}</li>);
   //   }
   // };
-
+renderTransactionSteps = () => {
+  switch (this.state.transactionStep) {
+			case 0:
+				return this.state.transactionStep;
+			case 1:
+				return this.state.transactionStep;
+			case 2:
+				return this.state.transactionStep;
+}
+}
   render() {
     return (
-      <Layout>
+      <Layout title="Send/Pay Stellar easily">
         <div className="row">
             <div>{this.props.loaderInfo.loaderText}</div>
             <div className="col-xs-12 col-md-offset-3 col-md-6">
+{/* // {this.renderTransactionSteps()} */}
               <div className="send-money-card">
                 <div className="send-money-card-header">
                   <div className="profile-image-container">

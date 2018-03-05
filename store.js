@@ -219,15 +219,11 @@ export const getSenderAccountDetails = sourceSecretKey => dispatch => {
             });
           }
         });
-      // console.log(senderAccountDetails);
+      console.log(senderAccountDetails);
       return dispatch({
-        type: actionTypes.LOADER_END
-      }).then(
-        dispatch({
           type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
           payload: { senderAccountDetails }
         })
-      );
     })
     .catch(function(err) {
       console.error(err);

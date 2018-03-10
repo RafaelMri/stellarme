@@ -2,7 +2,10 @@ import { createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import thunkMiddleware from "redux-thunk";
 import StellarSdk from "stellar-sdk";
-export const apiURL = process.env.NODE_ENV === "production" ? 'http://api.stellar.to/' : 'http://localhost:4000/';
+export const apiURL =
+  process.env.NODE_ENV === "production"
+    ? "http://api.stellar.to/"
+    : "http://localhost:4000/";
 const stellarMeInitialState = {
   senderAccountDetails: {},
   senderAccountHistory: {},
@@ -29,7 +32,8 @@ export const actionTypes = {
   GET_SENDER_ACCOUNT_DETAILS: "GET_SENDER_ACCOUNT_DETAILS",
   LOAD_SENDER_ACCOUNT_HISTORY: "LOAD_SENDER_ACCOUNT_HISTORY",
   SEND_PAYMENT: "SEND_PAYMENT",
-  ADD_NEW_PAIR_DB_STATUS: "ADD_NEW_PAIR_DB_STATUS"
+  ADD_NEW_PAIR_DB_STATUS: "ADD_NEW_PAIR_DB_STATUS",
+  CLEAR_PAYMENT_SENDER: "CLEAR_PAYMENT_SENDER"
 };
 
 // REDUCERS
@@ -62,6 +66,17 @@ export const reducer = (state = stellarMeInitialState, action) => {
           loaderText: ""
         }
       };
+    case actionTypes.CLEAR_PAYMENT_SENDER:
+      return {
+        ...state,
+        loaderInfo: {
+          loaderStatus: false,
+          loaderText: ""
+        },
+        paymentDetails: {},
+        senderAccountDetails: {},
+        senderAccountHistory: {}
+      };
     case actionTypes.ADD_NEW_PAIR_DB_STATUS:
       return {
         ...state,
@@ -76,8 +91,10 @@ export const reducer = (state = stellarMeInitialState, action) => {
     case actionTypes.SEND_PAYMENT:
       return {
         ...state,
-        paymentDetails: {info: action.payload.paymentDetails,
-        isPaymentSuccess: action.payload.isPaymentSuccess}
+        paymentDetails: {
+          info: action.payload.paymentDetails,
+          isPaymentSuccess: action.payload.isPaymentSuccess
+        }
       };
     default:
       return state;
@@ -193,41 +210,51 @@ export const sendPayment = (
     });
 };
 
-export const getSenderAccountDetails = sourceSecretKey => dispatch => {
-  var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
-  var sourcePublicKey = sourceKeypair.publicKey();
-  // var receiverPublicKey =
-  //   "GBAWHX3GPP3SYUZ5AWNAYUL6AMCUYYSRROONNR4JISQ34KWCSLN3GNV5";
-  var server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
+export const getSenderAccountDetails = (sourceSecretKey, cb) => dispatch => {
+  if (StellarSdk.StrKey.isValidEd25519SecretSeed(sourceSecretKey)) {
+    var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
+    var sourcePublicKey = sourceKeypair.publicKey();
+    var server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
 
-  server
-    .accounts()
-    .accountId(sourcePublicKey)
-    .call()
-    .then(function(senderAccountDetails) {
-      // adding listener to transaction for this account
-      const es = server
-        .payments()
-        .forAccount(sourcePublicKey)
-        .cursor("now")
-        .stream({
-          onmessage: function(senderAccountHistory) {
-            console.log(senderAccountHistory);
-            return dispatch({
-              type: actionTypes.LOAD_SENDER_ACCOUNT_HISTORY,
-              payload: { senderAccountHistory }
-            });
+    server
+      .accounts()
+      .accountId(sourcePublicKey)
+      .call()
+      .then(function(senderAccountDetails) {
+        // adding listener to transaction for this account
+        const es = server
+          .payments()
+          .forAccount(sourcePublicKey)
+          .cursor("now")
+          .stream({
+            onmessage: function(senderAccountHistory) {
+              console.log(senderAccountHistory);
+              return dispatch({
+                type: actionTypes.LOAD_SENDER_ACCOUNT_HISTORY,
+                payload: { senderAccountHistory }
+              });
+            }
+          });
+        console.log(senderAccountDetails);
+        cb();
+        return dispatch({
+          type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
+          payload: {
+            senderAccountDetails: { ...senderAccountDetails, loginError: true }
           }
         });
-      console.log(senderAccountDetails);
-      return dispatch({
-          type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
-          payload: { senderAccountDetails }
-        })
-    })
-    .catch(function(err) {
-      console.error(err);
+      })
+      .catch(function(err) {
+        console.error(err);
+      });
+  } else {
+    return dispatch({
+      type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
+      payload: {
+        senderAccountDetails: { loginError: true }
+      }
     });
+  }
 };
 
 export const addNewPairtoDB = (username, publicKey) => dispatch => {
@@ -294,6 +321,11 @@ export const loaderEnd = () => dispatch => {
   return dispatch({
     type: actionTypes.LOADER_END,
     payload: { loaderText: loaderText }
+  });
+};
+export const clearPaymentandSenderInfo = () => dispatch => {
+  return dispatch({
+    type: actionTypes.CLEAR_PAYMENT_SENDER
   });
 };
 

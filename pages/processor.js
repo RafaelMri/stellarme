@@ -75,6 +75,11 @@ class StellarMe extends React.Component {
         senderAccountHistory: nextProps.senderAccountHistory
       });
     }
+    if (this.props.loaderInfo !== nextProps.loaderInfo) {
+      this.setState({
+        loaderInfo: nextProps.loaderInfo
+      });
+    }
   }
 
   handleSecretKey = e => {
@@ -92,19 +97,21 @@ class StellarMe extends React.Component {
 
   handleTransaction = () => {
     console.log("in confirm trans");
+    this.props.loaderStart("Processing Payment...");
     this.props.sendPayment(
       this.state.secretKey,
       this.state.receiverAccountDetails.receiverPublicAddress,
-      this.state.receiverAccountDetails.receiverAmount
+      this.state.receiverAccountDetails.receiverAmount,
+      () =>
+        this.setState(state => ({
+          transactionStep: 3
+        }))
     );
   };
 
-  // handleEnableSignInButton = () =>
-  //   this.setState({ enableTransferButton: true });
-
   handleAccountView = () => {
     console.log("in account view");
-    this.props.loaderStart("Getting Account details");
+    this.props.loaderStart("Getting Account details...");
     this.props.getSenderAccountDetails(this.state.secretKey, () =>
       this.setState(state => ({
         transactionStep: 2
@@ -163,6 +170,11 @@ class StellarMe extends React.Component {
             ) : (
               ""
             )}
+            <p className="bg-info">
+              {this.state.loaderInfo && this.state.loaderInfo.loaderStatus
+                ? this.state.loaderInfo.loaderText
+                : null}
+            </p>
             <button
               className="btn btn-primary"
               onClick={() => this.handleAccountView()}
@@ -175,8 +187,8 @@ class StellarMe extends React.Component {
         );
       case 2:
         return (
-          <div className="col-xs-12 col-md-offset-2 col-md-8">
-            <div className="account-history-wrapper text-center">
+          <div className="col-xs-12 col-md-offset-2 col-md-8 text-center">
+            <div className="account-history-wrapper">
               <h4>Account Balance</h4>
               <ul>
                 {this.state.senderAccountDetails &&
@@ -199,16 +211,14 @@ class StellarMe extends React.Component {
               </ul>
             </div>
             <div className="row">
-              <div className="col-xs-12 col-md-12">
+              <div className="col-xs-12 col-md-12 text-center">
+                <p className="bg-info">
+                  {this.state.loaderInfo && this.state.loaderInfo.loaderStatus
+                    ? this.state.loaderInfo.loaderText
+                    : null}
+                </p>
                 <button
-                  onClick={() =>
-                    this.setState(
-                      state => ({
-                        transactionStep: 3
-                      }),
-                      () => this.handleTransaction()
-                    )
-                  }
+                  onClick={() => this.handleTransaction()}
                   className="btn btn-primary"
                 >
                   Transfer Now

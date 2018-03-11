@@ -1,10 +1,11 @@
 import { createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import thunkMiddleware from "redux-thunk";
+import reduxMulti from "redux-multi";
 import StellarSdk from "stellar-sdk";
 export const apiURL =
   process.env.NODE_ENV === "production"
-    ? "http://api.stellar.to/"
+    ? "https://api.stellar.to/"
     : "http://localhost:4000/";
 const stellarMeInitialState = {
   senderAccountDetails: {},
@@ -130,7 +131,8 @@ export const getReceiverAccountDetails = (
 export const sendPayment = (
   sourceSecretKey,
   receiverPublicKey,
-  amount
+  amount,
+  cb
 ) => dispatch => {
   console.log(sourceSecretKey, receiverPublicKey, amount);
   // Derive Keypair object and public key (that starts with a G) from the secret
@@ -182,13 +184,19 @@ export const sendPayment = (
       server
         .submitTransaction(transaction)
         .then(function(transactionResult) {
-          dispatch({
-            type: actionTypes.SEND_PAYMENT,
-            payload: {
-              paymentDetails: transactionResult,
-              isPaymentSuccess: true
+          cb();
+          dispatch([
+            {
+              type: actionTypes.LOADER_END
+            },
+            {
+              type: actionTypes.SEND_PAYMENT,
+              payload: {
+                paymentDetails: transactionResult,
+                isPaymentSuccess: true
+              }
             }
-          });
+          ]);
           console.log(JSON.stringify(transactionResult, null, 2));
           console.log("\nSuccess! View the transaction at: ");
           console.log(transactionResult._links.transaction.href);
@@ -196,13 +204,18 @@ export const sendPayment = (
         .catch(function(err) {
           console.log("An error has occured:");
           console.log(err);
-          dispatch({
-            type: actionTypes.SEND_PAYMENT,
-            payload: {
-              paymentDetails: transactionResult,
-              isPaymentSuccess: false
+          dispatch([
+            {
+              type: actionTypes.LOADER_END
+            },
+            {
+              type: actionTypes.SEND_PAYMENT,
+              payload: {
+                paymentDetails: transactionResult,
+                isPaymentSuccess: false
+              }
             }
-          });
+          ]);
         });
     })
     .catch(function(e) {
@@ -235,25 +248,38 @@ export const getSenderAccountDetails = (sourceSecretKey, cb) => dispatch => {
               });
             }
           });
-        console.log(senderAccountDetails);
         cb();
-        return dispatch({
-          type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
-          payload: {
-            senderAccountDetails: { ...senderAccountDetails, loginError: true }
+        console.log("senderAccountDetails", senderAccountDetails);
+        return dispatch([
+          {
+            type: actionTypes.LOADER_END
+          },
+          {
+            type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
+            payload: {
+              senderAccountDetails: {
+                ...senderAccountDetails,
+                loginError: true
+              }
+            }
           }
-        });
+        ]);
       })
       .catch(function(err) {
         console.error(err);
       });
   } else {
-    return dispatch({
-      type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
-      payload: {
-        senderAccountDetails: { loginError: true }
+    return dispatch([
+      {
+        type: actionTypes.LOADER_END
+      },
+      {
+        type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
+        payload: {
+          senderAccountDetails: { loginError: true }
+        }
       }
-    });
+    ]);
   }
 };
 
@@ -313,14 +339,13 @@ export const getSenderAccountHistory = sourcePublicKey => dispatch => {
 export const loaderStart = loaderText => dispatch => {
   return dispatch({
     type: actionTypes.LOADER_START,
-    payload: { loaderText: loaderText }
+    payload: { loaderText }
   });
 };
 
 export const loaderEnd = () => dispatch => {
   return dispatch({
-    type: actionTypes.LOADER_END,
-    payload: { loaderText: loaderText }
+    type: actionTypes.LOADER_END
   });
 };
 export const clearPaymentandSenderInfo = () => dispatch => {
@@ -333,6 +358,6 @@ export const initStore = (initialState = stellarMeInitialState) => {
   return createStore(
     reducer,
     initialState,
-    composeWithDevTools(applyMiddleware(thunkMiddleware))
+    composeWithDevTools(applyMiddleware(reduxMulti, thunkMiddleware))
   );
 };

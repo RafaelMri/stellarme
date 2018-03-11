@@ -285,35 +285,53 @@ export const getSenderAccountDetails = (sourceSecretKey, cb) => dispatch => {
 
 export const addNewPairtoDB = (username, publicKey) => dispatch => {
   console.log(username, publicKey);
-  fetch(`${apiURL}users`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ id: username, publicKey: publicKey })
-  }).then(res => {
-    console.log("res", res);
-    // const responseData = res.json();
-    if (res.status === 201 && res.statusText === "Created") {
-      return dispatch({
-        type: actionTypes.ADD_NEW_PAIR_DB_STATUS,
-        payload: {
-          addedNewPairInfo: {
-            isNewPairAddSuccess: true,
-            addedUsername: username
+  if (StellarSdk.StrKey.isValidEd25519PublicKey(publicKey)) {
+    fetch(`${apiURL}users`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ id: username, publicKey: publicKey })
+    }).then(res => {
+      console.log("res", res);
+      // const responseData = res.json();
+      if (res.status === 201 && res.statusText === "Created") {
+        return dispatch({
+          type: actionTypes.ADD_NEW_PAIR_DB_STATUS,
+          payload: {
+            addedNewPairInfo: {
+              isNewPairAddSuccess: true,
+              addedUsername: username
+            }
           }
+        });
+      } else {
+        return dispatch({
+          type: actionTypes.ADD_NEW_PAIR_DB_STATUS,
+          payload: {
+            addedNewPairInfo: {
+              isNewPairAddSuccess: false,
+              addedUsername: "",
+              responseText:
+                "Sorry, this unique name already taken. Please try another name."
+            }
+          }
+        });
+      }
+    });
+  } else {
+    return dispatch({
+      type: actionTypes.ADD_NEW_PAIR_DB_STATUS,
+      payload: {
+        addedNewPairInfo: {
+          isNewPairAddSuccess: false,
+          addedUsername: "",
+          responseText: "Invalid Stellar Public Key/Address. Please check."
         }
-      });
-    } else {
-      return dispatch({
-        type: actionTypes.ADD_NEW_PAIR_DB_STATUS,
-        payload: {
-          addedNewPairInfo: { isNewPairAddSuccess: false, addedUsername: "" }
-        }
-      });
-    }
-  });
+      }
+    });
+  }
 };
 
 export const getSenderAccountHistory = sourcePublicKey => dispatch => {

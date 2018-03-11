@@ -52,7 +52,10 @@ class HomePage extends React.Component {
 
   render() {
     return (
-      <Layout parentClassName="homepage" title="Stellar.To - Your personalized Stellar Payment Link">
+      <Layout
+        parentClassName="homepage"
+        title="Stellar.To - Your personalized Stellar Payment Link"
+      >
         <div className="container-fluid">
           <div>{this.props.loaderInfo.loaderText}</div>
           <div className="row">
@@ -137,8 +140,8 @@ class HomePage extends React.Component {
                   <span
                     class="glyphicon glyphicon-warning-sign"
                     aria-hidden="true"
-                  />{" "}
-                  Sorry, this name already taken. Please try another name.
+                  />
+                  {this.state.addedNewPairInfo.responseText}
                 </h3>
               ) : (
                 ""

@@ -105,7 +105,7 @@ class HomePage extends React.Component {
                 ""
               )}
               <button
-                className="btn btn-primary"
+                className="btn btn-default"
                 disabled={
                   this.state.username === "" || this.state.publicKey == ""
                 }
@@ -121,12 +121,18 @@ class HomePage extends React.Component {
                 <div className="text-center">
                   <h3>Here's Your Personal Link</h3>
                   <h3 className="unique-link">
-                    <span class="glyphicon glyphicon-ok" aria-hidden="true" />
+                    <span
+                      className="glyphicon glyphicon-ok"
+                      aria-hidden="true"
+                    />
                     <a href={`/${this.state.addedNewPairInfo.addedUsername}`}>
                       www.stellar.to/{this.state.addedNewPairInfo.addedUsername}
                     </a>{" "}
                     <br />
-                    <span class="glyphicon glyphicon-send" aria-hidden="true" />
+                    <span
+                      className="glyphicon glyphicon-send"
+                      aria-hidden="true"
+                    />
                     <a
                       href={`/${this.state.addedNewPairInfo.addedUsername}/450`}
                     >
@@ -138,7 +144,7 @@ class HomePage extends React.Component {
               ) : this.state.addedNewPairInfo.isNewPairAddSuccess === false ? (
                 <h3 className="text-center">
                   <span
-                    class="glyphicon glyphicon-warning-sign"
+                    className="glyphicon glyphicon-warning-sign"
                     aria-hidden="true"
                   />
                   {this.state.addedNewPairInfo.responseText}

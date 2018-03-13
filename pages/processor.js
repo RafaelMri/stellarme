@@ -145,27 +145,29 @@ class StellarMe extends React.Component {
       const history = this.state.senderAccountHistory;
       return (
         <div>
-        <a href={history._links.self.href} target="_blank">Click here to see more info for this transaction.</a>
-        <div class="table-responsive">
-          <table className="table table-bordered">
-            <tbody>
-              <tr>
-                <td className="success">Amount</td>
-                <td>
-                  {history.amount} {history.asset_type}
-                </td>
-              </tr>
-              <tr>
-                <td className="success">From Account</td>
-                <td>{history.source_account}</td>
-              </tr>
-              <tr>
-                <td className="success">To Account</td>
-                <td>{history.to}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <a href={history._links.self.href} target="_blank">
+            Click here to see more info for this transaction.
+          </a>
+          <div class="table-responsive">
+            <table className="table table-bordered">
+              <tbody>
+                <tr>
+                  <td className="success">Amount</td>
+                  <td>
+                    {history.amount} {history.asset_type}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="success">From Account</td>
+                  <td>{history.source_account}</td>
+                </tr>
+                <tr>
+                  <td className="success">To Account</td>
+                  <td>{history.to}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       );
     }
@@ -175,16 +177,22 @@ class StellarMe extends React.Component {
     switch (this.state.transactionStep) {
       case 0:
         return (
-          <button
-            onClick={() =>
-              this.setState(state => ({
-                transactionStep: 1
-              }))
-            }
-            className="btn btn-primary"
-          >
-            Let me Sign In
-          </button>
+          <div className="col-md-12 text-center">
+            <button
+              onClick={() =>
+                this.setState(state => ({
+                  transactionStep: 1
+                }))
+              }
+              className="btn btn-primary"
+            >
+              Let me Sign In
+              <span
+                className="glyphicon glyphicon-circle-arrow-right"
+                aria-hidden="true"
+              />
+            </button>
+          </div>
         );
       case 1:
         return (
@@ -223,7 +231,7 @@ class StellarMe extends React.Component {
         );
       case 2:
         return (
-          <div className="col-xs-12 col-md-offset-2 col-md-8 text-center">
+          <div className="col-md-offset-2 col-md-8 text-center">
             <div className="account-history-wrapper">
               <h4>Account Balance</h4>
               <ul>
@@ -400,6 +408,8 @@ class StellarMe extends React.Component {
                     </span>
                   </div>
                 </div>
+              </div>
+              <div className="row send-money-card-body">
                 {this.renderTransactionSteps()}
               </div>
             </div>

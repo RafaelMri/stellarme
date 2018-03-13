@@ -207,3 +207,6 @@ footer {
 footer {
   position: inherit;
 }
+.glyphicon {
+  padding: 0 10px;
+}

@@ -20,6 +20,7 @@ class StellarMe extends React.Component {
     this.state = {
       secretKey: "SAY7IXRUGERQHGJ6S6EVCHYTYBXXOCDGE22W5LG74T3RUAW5WXBBNXTL",
       senderAccountDetails: {},
+      senderAccountHistory: {},
       receiverAccountDetails: {
         receiverPublicAddress: "",
         receiverAmount: 1,
@@ -80,6 +81,11 @@ class StellarMe extends React.Component {
         loaderInfo: nextProps.loaderInfo
       });
     }
+    if (this.props.senderAccountHistory !== nextProps.senderAccountHistory) {
+      this.setState({
+        senderAccountHistory: nextProps.senderAccountHistory
+      });
+    }
   }
 
   handleSecretKey = e => {
@@ -131,11 +137,40 @@ class StellarMe extends React.Component {
     }
   };
 
-  // renderAccountHistory = () => {
-  //   if(this.state.senderAccountHistory && this.state.senderAccountHistory.records && this.state.senderAccountHistory.records.length){
-  //     this.state.senderAccountHistory.records.map(item => <li>{item.fee_paid} on {item.created_at}</li>);
-  //   }
-  // };
+  renderAccountHistory = () => {
+    if (
+      this.state.senderAccountHistory &&
+      this.state.senderAccountHistory.amount
+    ) {
+      const history = this.state.senderAccountHistory;
+      return (
+        <div>
+        <a href={history._links.self.href} target="_blank">Click here to see more info for this transaction.</a>
+        <div class="table-responsive">
+          <table className="table table-bordered">
+            <tbody>
+              <tr>
+                <td className="success">Amount</td>
+                <td>
+                  {history.amount} {history.asset_type}
+                </td>
+              </tr>
+              <tr>
+                <td className="success">From Account</td>
+                <td>{history.source_account}</td>
+              </tr>
+              <tr>
+                <td className="success">To Account</td>
+                <td>{history.to}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+      );
+    }
+    return null;
+  };
   renderTransactionSteps = () => {
     switch (this.state.transactionStep) {
       case 0:
@@ -181,6 +216,7 @@ class StellarMe extends React.Component {
               disabled={!this.state.secretKey.length}
               className="btn btn-primary"
             >
+              <span className="glyphicon glyphicon-user" aria-hidden="true" />
               Sign In and Show Balance
             </button>
           </div>
@@ -221,10 +257,14 @@ class StellarMe extends React.Component {
                   onClick={() => this.handleTransaction()}
                   className="btn btn-primary"
                 >
+                  <span
+                    className="glyphicon glyphicon-send"
+                    aria-hidden="true"
+                  />
                   Transfer Now
                 </button>
               </div>
-              {/* <div className="col-xs-12 col-md-6">
+              <div className="col-xs-12 col-md-6">
                 <button
                   onClick={() =>
                     this.setState(
@@ -236,9 +276,9 @@ class StellarMe extends React.Component {
                   }
                   className="btn btn-primary"
                 >
-                  Back to Login
+                  Sign Out
                 </button>
-              </div> */}
+              </div>
             </div>
           </div>
         );
@@ -254,6 +294,7 @@ class StellarMe extends React.Component {
                     src="/static/success.svg"
                   />
                   <h3>Payment Success.</h3>
+                  {this.renderAccountHistory()}
                 </div>
                 <button
                   onClick={() =>
@@ -266,6 +307,10 @@ class StellarMe extends React.Component {
                   }
                   className="btn btn-primary"
                 >
+                  <span
+                    className="glyphicon glyphicon-repeat"
+                    aria-hidden="true"
+                  />
                   Transfer Again
                 </button>
               </div>
@@ -287,6 +332,10 @@ class StellarMe extends React.Component {
                   }
                   className="btn btn-primary"
                 >
+                  <span
+                    className="glyphicon glyphicon-align-repeat"
+                    aria-hidden="true"
+                  />
                   Retry Again
                 </button>
               </div>

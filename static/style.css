@@ -5,11 +5,11 @@ body {
   font-family: "Open Sans", sans-serif;
 }
 body {
-  background-color: #f7f9fa;
+  background-color: #33a0b5;
   padding-bottom: 60px;
   position: relative;
   min-height: 100vh;
-  background: url("/static/bg.jpg") blueviolet no-repeat center center;
+  background: url("/static/bg.jpg") #33a0b5 no-repeat center center;
   background-size: cover;
   color: #fff;
 }
@@ -40,11 +40,12 @@ footer {
   max-width: 700px;
   background-color: #fff;
   margin: 10px auto 20px auto;
+  color: #444;
 }
 .send-money-card-header {
   padding: 0 0 30px 0;
-  background: linear-gradient(180deg, #58b4d3 0, #695fb5 100%);
-  background: -o-linear-gradient(-90deg, #58b4d3 0, #695fb5 100%);
+  background: linear-gradient(180deg, #58b4d3 0, #327ab7 100%);
+  background: -o-linear-gradient(-90deg, #58b4d3 0, #327ab7 100%);
 }
 .profile-image-container {
   position: relative;
@@ -69,83 +70,40 @@ footer {
 /* SEND MONEY CARD END */
 
 /* SEND MONEY CARD BODY START */
-/* .send-money-card-body {
-  padding: 20px 10px;
-} */
+.send-money-card-body {
+  padding: 20px 15px;
+}
 
-.send-money-card-body button.btn {
+/* .send-money-card-body button.btn {
   margin: 15px auto;
   display: block;
   max-width: 300px;
   width: 100%;
+} */
+.btn-signout {
+  position: absolute;
+  right: 20px;
+  top: 20px;
 }
-
-.receiver-address {
-  font-size: 12px;
-}
-.receiver-address input,
-.secret-key input {
-  font-size: 20px;
-  border: none;
-  box-shadow: none;
-  border-bottom: 1px solid grey;
-  border-radius: 0;
-  max-width: 350px;
-  margin: 0 auto;
-}
-.receiver-address input:focus,
-.secret-key input:focus {
-  border-color: grey;
-  outline: 0;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-.receiver-address span:first-child {
-  color: grey;
-  text-decoration: underline;
-  text-transform: uppercase;
-}
-.receiver-address span:last-child {
-  font-size: 16px;
-  line-height: 32px;
-  word-break: break-word;
-}
-
-.secret-key {
-  position: relative;
-  padding-top: 30px;
-}
-.secret-key span {
-  display: block;
-  font-size: 12px;
-  margin-bottom: -36px;
-  color: grey;
-  text-decoration: underline;
-  text-transform: uppercase;
-}
-
-.amount-transfer {
+/* .transferAmount {
   margin: 0 auto 10px auto;
   border-bottom: 1px solid grey;
   max-width: 220px;
-}
-.amount-transfer input {
-  width: 170px;
+} */
+.transferAmount {
+  width: 300px;
   font-size: 60px;
   display: inline-block;
   height: auto;
   line-height: 0;
-  padding: 0;
+  padding: 0 10px;
   border: 0;
   border-radius: 0;
   box-shadow: none;
+  margin: 0 10px;
+  text-align: center;
 }
-.amount-transfer input:focus {
-  border-color: grey;
-  outline: 0;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
+
 .amount-transfer span {
   padding-left: 10px;
   font-size: 20px;

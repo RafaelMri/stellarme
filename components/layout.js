@@ -1,11 +1,7 @@
 import Link from "next/link";
 import Head from "next/head";
 
-export default ({
-  children,
-  title = "This is the default title",
-  parentClassName = ""
-}) => (
+export default ({ children, title = "Stellar.To", parentClassName = "" }) => (
   <div>
     <Head>
       <title>{title}</title>
@@ -43,21 +39,14 @@ export default ({
                 </a>
               </Link>
             </div>
-            {/* <div id="navbar" className="collapse navbar-collapse">
-              <ul className="nav navbar-nav">
-                <li><Link href="/"><a>Home</a></Link></li>
-                <li><Link href="/get-link"><a>Get My Link</a></Link></li>
-              </ul>
-          </div> */}
+            <span className="center-block">Running in Test Net. MainNet Soon</span>
           </div>
         </nav>
       </header>
 
       <div className="container body">{children}</div>
       <footer>
-        <div className="container">
-          2018 - Stellar.To
-        </div>
+        <div className="container">2018 - Stellar.To</div>
       </footer>
     </div>
   </div>

@@ -134,7 +134,8 @@ export const sendPayment = (
   amount,
   cb
 ) => dispatch => {
-  console.log(sourceSecretKey, receiverPublicKey, amount);
+  // if (StellarSdk.StrKey.isValidEd25519PublicKey(receiverPublicKey)) {
+  // console.log(sourceSecretKey, receiverPublicKey, amount);
   // Derive Keypair object and public key (that starts with a G) from the secret
   var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
   var sourcePublicKey = sourceKeypair.publicKey();
@@ -223,60 +224,99 @@ export const sendPayment = (
     });
 };
 
-export const getSenderAccountDetails = (sourceSecretKey, cb) => dispatch => {
-  if (StellarSdk.StrKey.isValidEd25519SecretSeed(sourceSecretKey)) {
-    var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
-    var sourcePublicKey = sourceKeypair.publicKey();
-    var server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
+export const getSenderAccountDetails = (
+  sourceSecretKey,
+  receiverPublicAddress,
+  cb
+) => dispatch => {
+  if (StellarSdk.StrKey.isValidEd25519PublicKey(receiverPublicAddress)) {
+    if (StellarSdk.StrKey.isValidEd25519SecretSeed(sourceSecretKey)) {
+      var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
+      var sourcePublicKey = sourceKeypair.publicKey();
+      var server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
 
-    server
-      .accounts()
-      .accountId(sourcePublicKey)
-      .call()
-      .then(function(senderAccountDetails) {
-        // adding listener to transaction for this account
-        const es = server
-          .payments()
-          .forAccount(sourcePublicKey)
-          .cursor("now")
-          .stream({
-            onmessage: function(senderAccountHistory) {
-              console.log(senderAccountHistory);
-              return dispatch({
-                type: actionTypes.LOAD_SENDER_ACCOUNT_HISTORY,
-                payload: { senderAccountHistory }
-              });
-            }
-          });
-        cb();
-        console.log("senderAccountDetails", senderAccountDetails);
-        return dispatch([
-          {
-            type: actionTypes.LOADER_END
-          },
-          {
-            type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
-            payload: {
-              senderAccountDetails: {
-                ...senderAccountDetails,
-                loginError: true
+      server
+        .accounts()
+        .accountId(sourcePublicKey)
+        .call()
+        .then(function(senderAccountDetails) {
+          // adding listener to transaction for this account
+          const es = server
+            .payments()
+            .forAccount(sourcePublicKey)
+            .cursor("now")
+            .stream({
+              onmessage: function(senderAccountHistory) {
+                console.log(senderAccountHistory);
+                return dispatch({
+                  type: actionTypes.LOAD_SENDER_ACCOUNT_HISTORY,
+                  payload: { senderAccountHistory }
+                });
+              }
+            });
+          cb();
+          console.log("senderAccountDetails", senderAccountDetails);
+          return dispatch([
+            {
+              type: actionTypes.LOADER_END
+            },
+            {
+              type: actionTypes.GET_RECEIVER_DETAILS,
+              payload: {
+                receiverAccountDetails: {
+                  isValidReceiverAddress: true,
+                  errorMsg: ""
+                }
+              }
+            },
+            {
+              type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
+              payload: {
+                senderAccountDetails: {
+                  ...senderAccountDetails,
+                  loginError: true
+                }
               }
             }
+          ]);
+        })
+        .catch(function(err) {
+          console.error(err);
+        });
+    } else {
+      return dispatch([
+        {
+          type: actionTypes.LOADER_END
+        },
+        {
+          type: actionTypes.GET_RECEIVER_DETAILS,
+          payload: {
+            receiverAccountDetails: {
+              isValidReceiverAddress: true,
+              errorMsg: ""
+            }
           }
-        ]);
-      })
-      .catch(function(err) {
-        console.error(err);
-      });
+        },
+        {
+          type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
+          payload: {
+            senderAccountDetails: { loginError: true }
+          }
+        }
+      ]);
+    }
   } else {
     return dispatch([
       {
         type: actionTypes.LOADER_END
       },
       {
-        type: actionTypes.GET_SENDER_ACCOUNT_DETAILS,
+        type: actionTypes.GET_RECEIVER_DETAILS,
         payload: {
-          senderAccountDetails: { loginError: true }
+          receiverAccountDetails: {
+            isValidReceiverAddress: false,
+            errorMsg: "Invalid Stellar Receiver Public Address. Please check."
+          }
         }
       }
     ]);
@@ -284,7 +324,7 @@ export const getSenderAccountDetails = (sourceSecretKey, cb) => dispatch => {
 };
 
 export const addNewPairtoDB = (username, publicKey) => dispatch => {
-  console.log(username, publicKey);
+  // console.log(username, publicKey);
   if (StellarSdk.StrKey.isValidEd25519PublicKey(publicKey)) {
     fetch(`${apiURL}users`, {
       method: "POST",

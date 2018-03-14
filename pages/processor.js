@@ -27,7 +27,6 @@ class StellarMe extends React.Component {
         receiverAssetType: "XLM"
       },
       loaderInfo: {},
-      // enableTransferButton: false,
       transactionStep: 0
     };
   }
@@ -36,15 +35,6 @@ class StellarMe extends React.Component {
     return { query };
   }
   componentDidMount() {
-    console.log("cdm props", this.props);
-    // if (
-    //     1
-    //   this.props.url.query &&
-    //   this.props.url.query.cProps &&
-    //   this.props.url.query.cProps.reqParams &&
-    //   this.props.url.query.cProps.reqParams.length
-    // ) {
-    console.log("inside cdm if");
     const receiverUsername =
       this.props.url.query.cProps &&
       this.props.url.query.cProps.reqParams.username
@@ -56,11 +46,9 @@ class StellarMe extends React.Component {
         ? this.props.url.query.cProps.reqParams.amount
         : 1;
     this.props.getReceiverAccountDetails(receiverUsername, receiverAmount);
-    // }
   }
+
   componentWillReceiveProps(nextProps) {
-    // console.log("cwrp:", this.props);
-    console.log("nextProps:", nextProps);
     if (this.props.senderAccountDetails !== nextProps.senderAccountDetails) {
       this.setState({ senderAccountDetails: nextProps.senderAccountDetails });
     }
@@ -68,7 +56,10 @@ class StellarMe extends React.Component {
       this.props.receiverAccountDetails !== nextProps.receiverAccountDetails
     ) {
       this.setState({
-        receiverAccountDetails: nextProps.receiverAccountDetails
+        receiverAccountDetails: {
+          ...this.state.receiverAccountDetails,
+          ...nextProps.receiverAccountDetails
+        }
       });
     }
     if (this.props.senderAccountHistory !== nextProps.senderAccountHistory) {
@@ -90,6 +81,15 @@ class StellarMe extends React.Component {
 
   handleSecretKey = e => {
     this.setState({ secretKey: e.target.value });
+  };
+
+  handleReceiverAddressChange = e => {
+    this.setState({
+      receiverAccountDetails: {
+        ...this.state.receiverAccountDetails,
+        receiverPublicAddress: e.target.value
+      }
+    });
   };
 
   handleReceiverAmountChange = e => {
@@ -118,10 +118,13 @@ class StellarMe extends React.Component {
   handleAccountView = () => {
     console.log("in account view");
     this.props.loaderStart("Getting Account details...");
-    this.props.getSenderAccountDetails(this.state.secretKey, () =>
-      this.setState(state => ({
-        transactionStep: 2
-      }))
+    this.props.getSenderAccountDetails(
+      this.state.secretKey,
+      this.state.receiverAccountDetails.receiverPublicAddress,
+      () =>
+        this.setState(state => ({
+          transactionStep: 2
+        }))
     );
   };
 
@@ -148,7 +151,7 @@ class StellarMe extends React.Component {
           <a href={history._links.self.href} target="_blank">
             Click here to see more info for this transaction.
           </a>
-          <div class="table-responsive">
+          <div className="table-responsive">
             <table className="table table-bordered">
               <tbody>
                 <tr>
@@ -177,7 +180,7 @@ class StellarMe extends React.Component {
     switch (this.state.transactionStep) {
       case 0:
         return (
-          <div className="col-md-12 text-center">
+          <div className="col-xs-12 col-md-12 text-center">
             <button
               onClick={() =>
                 this.setState(state => ({
@@ -196,17 +199,20 @@ class StellarMe extends React.Component {
         );
       case 1:
         return (
-          <div>
-            <p className="secret-key">
-              <span>Secret Key: </span>
-              <input
-                required
-                type="text"
-                onChange={this.handleSecretKey}
-                value={this.state.secretKey}
-                className="form-control text-center"
-              />
-            </p>
+          <div className="col-xs-12 col-md-12">
+            <form>
+              <div class="form-group">
+                <label htmlFor="txtSecretKey">Secret Key</label>
+                <input
+                  required
+                  type="text"
+                  onChange={this.handleSecretKey}
+                  value={this.state.secretKey}
+                  className="form-control text-center"
+                  id="txtSecretKey"
+                />
+              </div>
+            </form>
             {this.state.senderAccountDetails &&
             this.state.senderAccountDetails.loginError ? (
               <p className="bg-danger">Wrong secret key. Please try again</p>
@@ -218,15 +224,17 @@ class StellarMe extends React.Component {
                 ? this.state.loaderInfo.loaderText
                 : null}
             </p>
-            <button
-              className="btn btn-primary"
-              onClick={() => this.handleAccountView()}
-              disabled={!this.state.secretKey.length}
-              className="btn btn-primary"
-            >
-              <span className="glyphicon glyphicon-user" aria-hidden="true" />
-              Sign In and Show Balance
-            </button>
+            <div className="text-center">
+              <button
+                className="btn btn-primary"
+                onClick={() => this.handleAccountView()}
+                disabled={!this.state.secretKey.length}
+                className="btn btn-primary"
+              >
+                <span className="glyphicon glyphicon-user" aria-hidden="true" />
+                Sign In and Show Balance
+              </button>
+            </div>
           </div>
         );
       case 2:
@@ -263,7 +271,7 @@ class StellarMe extends React.Component {
                 </p>
                 <button
                   onClick={() => this.handleTransaction()}
-                  className="btn btn-primary"
+                  className="btn btn-primary btn-lg btn-block"
                 >
                   <span
                     className="glyphicon glyphicon-send"
@@ -272,27 +280,12 @@ class StellarMe extends React.Component {
                   Transfer Now
                 </button>
               </div>
-              <div className="col-xs-12 col-md-6">
-                <button
-                  onClick={() =>
-                    this.setState(
-                      state => ({
-                        transactionStep: 1
-                      }),
-                      () => this.props.clearPaymentandSenderInfo()
-                    )
-                  }
-                  className="btn btn-primary"
-                >
-                  Sign Out
-                </button>
-              </div>
             </div>
           </div>
         );
       case 3:
         return (
-          <div>
+          <div className="col-md-12 col-xs-12">
             {this.props.paymentDetails &&
             this.props.paymentDetails.isPaymentSuccess ? (
               <div>
@@ -366,48 +359,70 @@ class StellarMe extends React.Component {
                 <div className="profile-image-container">
                   <div className="profile-header-img current-profile-img" />
                 </div>
+
+                {this.state.transactionStep > 1 && (
+                  <button
+                    onClick={() =>
+                      this.setState(
+                        state => ({
+                          transactionStep: 1
+                        }),
+                        () => this.props.clearPaymentandSenderInfo()
+                      )
+                    }
+                    className="btn btn-default btn-xs btn-signout"
+                  >
+                    Sign Out
+                  </button>
+                )}
               </div>
               <div className="send-money-card-body">
                 <h3 className="text-center">Send Payment</h3>
-                <div>
-                  {this.state.receiverAccountDetails.receiverPublicAddress ===
-                  "" ? (
-                    <p className="receiver-address">
+
+                <form>
+                  <div className="form-group">
+                    <label htmlFor="txtReceiverAddress">
+                      Receiver Public Address
+                    </label>
+                    {this.state.transactionStep < 2 ? (
                       <input
                         type="text"
-                        placeholder="Enter Receiver Address"
-                        defaultValue={
+                        className="form-control"
+                        id="txtReceiverAddress"
+                        placeholder="Receiver Public Address"
+                        value={
                           this.state.receiverAccountDetails
                             .receiverPublicAddress
                         }
-                        className="form-control"
+                        onChange={this.handleReceiverAddressChange}
                       />
-                    </p>
-                  ) : (
-                    <p className="receiver-address">
-                      <span>Receiver Address: </span>
-                      <span>
+                    ) : (
+                      <p class="form-control-static">
                         {
                           this.state.receiverAccountDetails
                             .receiverPublicAddress
                         }
-                      </span>
+                      </p>
+                    )}
+                    <p className="text-danger">
+                      {this.state.receiverAccountDetails.errorMsg}
                     </p>
-                  )}
-                  <div className="amount-transfer text-center">
-                    <label className="sr-only">Amount to transfer</label>
+                  </div>
+                  <div className="form-group text-center">
+                    <label htmlFor="txtReceiverAmount">Amount</label>
                     <input
                       type="number"
-                      max={this.state.receiverAccountDetails.receiverAmount}
+                      className="form-control transferAmount"
+                      id="txtReceiverAmount"
+                      placeholder="Amount"
                       value={this.state.receiverAccountDetails.receiverAmount}
                       onChange={this.handleReceiverAmountChange}
-                      className="form-control text-center"
                     />
                     <span>
                       {this.state.receiverAccountDetails.receiverAssetType}
                     </span>
                   </div>
-                </div>
+                </form>
               </div>
               <div className="row send-money-card-body">
                 {this.renderTransactionSteps()}

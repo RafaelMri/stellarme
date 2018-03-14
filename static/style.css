@@ -90,14 +90,18 @@ footer {
   border-bottom: 1px solid grey;
   max-width: 220px;
 } */
+.table-transaction-status {
+  text-align: left;
+}
 .transferAmount {
-  width: 300px;
+  width: 250px;
   font-size: 60px;
   display: inline-block;
   height: auto;
   line-height: 0;
   padding: 0 10px;
   border: 0;
+  border-bottom: 1px solid #444;
   border-radius: 0;
   box-shadow: none;
   margin: 0 10px;
@@ -111,6 +115,9 @@ footer {
 /* SEND MONEY CARD BODY END */
 
 /* ACCOUNT HISTORY START */
+.form-control-static {
+  word-wrap: break-word;
+}
 .account-history-wrapper {
   background: #fff;
   padding: 5px 10px;

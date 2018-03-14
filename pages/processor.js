@@ -18,7 +18,7 @@ class StellarMe extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      secretKey: "SAY7IXRUGERQHGJ6S6EVCHYTYBXXOCDGE22W5LG74T3RUAW5WXBBNXTL",
+      secretKey: "",
       senderAccountDetails: {},
       senderAccountHistory: {},
       receiverAccountDetails: {
@@ -152,7 +152,7 @@ class StellarMe extends React.Component {
             Click here to see more info for this transaction.
           </a>
           <div className="table-responsive">
-            <table className="table table-bordered">
+            <table className="table table-bordered table-transaction-status">
               <tbody>
                 <tr>
                   <td className="success">Amount</td>
@@ -285,7 +285,7 @@ class StellarMe extends React.Component {
         );
       case 3:
         return (
-          <div className="col-md-12 col-xs-12">
+          <div className="col-md-12 col-xs-12 text-center">
             {this.props.paymentDetails &&
             this.props.paymentDetails.isPaymentSuccess ? (
               <div>

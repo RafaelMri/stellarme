@@ -39,14 +39,30 @@ export default ({ children, title = "Stellar.To", parentClassName = "" }) => (
                 </a>
               </Link>
             </div>
-            <span className="center-block">Running in Test Net. MainNet Soon</span>
+            <span className="center-block">
+              Running in TestNet. MainNet will be available soon.
+            </span>
           </div>
         </nav>
       </header>
 
       <div className="container body">{children}</div>
       <footer>
-        <div className="container">2018 - Stellar.To</div>
+        <div className="container">
+        <span>GitHub: </span>
+            <a
+              className="btn btn-info btn-xs"
+              href="https://github.com/sureshdurairaj/stellarme"
+            >
+              StellarTo App
+            </a>
+          <a
+            className="btn btn-info btn-xs"
+            href="https://github.com/sureshdurairaj/stellarmedb"
+          >
+            StellarTo JSON DB Server
+          </a>
+        </div>
       </footer>
     </div>
   </div>

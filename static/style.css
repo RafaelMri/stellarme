@@ -26,8 +26,8 @@ header nav .navbar-brand {
 
 /* FOOTER START */
 footer {
-  position: absolute;
-  bottom: 0;
+  /* position: absolute; */
+  /* bottom: 0; */
   width: 100%;
   padding: 20px 0;
   margin-top: 20px;

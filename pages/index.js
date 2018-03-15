@@ -154,6 +154,21 @@ class HomePage extends React.Component {
               )}
             </div>
           </div>
+          <div className="row">
+            <div className="col-md-12">
+              <h4>Upcoming features,</h4>
+              <ol>
+                <li>Launching Main Net option soon.</li>
+                <li>Add MEMO to your transaction.</li>
+                <li>Account Viewer</li>
+                <li>
+                  Account Management - Login/Schedule Transaction/Alert and many
+                  more.
+                </li>
+                <li>Migration to MongoDB from JSON DB.</li>
+              </ol>
+            </div>
+          </div>
         </div>
       </Layout>
     );

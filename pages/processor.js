@@ -25,7 +25,7 @@ class StellarMe extends React.Component {
         receiverPublicAddress: "",
         receiverAmount: 1,
         receiverAssetType: "XLM",
-        receiverMemo: "",
+        receiverMemo: ""
       },
       loaderInfo: {},
       transactionStep: 0
@@ -79,6 +79,10 @@ class StellarMe extends React.Component {
       });
     }
   }
+  handleclearPaymentandSenderInfo = () =>
+    this.setState({ secretKey: "" }, () =>
+      this.props.clearPaymentandSenderInfo()
+    );
 
   handleSecretKey = e => {
     this.setState({ secretKey: e.target.value });
@@ -327,7 +331,7 @@ class StellarMe extends React.Component {
                       state => ({
                         transactionStep: 1
                       }),
-                      () => this.props.clearPaymentandSenderInfo()
+                      () => this.handleclearPaymentandSenderInfo()
                     )
                   }
                   className="btn btn-primary"
@@ -352,7 +356,7 @@ class StellarMe extends React.Component {
                       state => ({
                         transactionStep: 1
                       }),
-                      () => this.props.clearPaymentandSenderInfo()
+                      () => this.handleclearPaymentandSenderInfo()
                     )
                   }
                   className="btn btn-primary"
@@ -391,7 +395,7 @@ class StellarMe extends React.Component {
                         state => ({
                           transactionStep: 1
                         }),
-                        () => this.props.clearPaymentandSenderInfo()
+                        () => this.handleclearPaymentandSenderInfo()
                       )
                     }
                     className="btn btn-default btn-xs btn-signout"

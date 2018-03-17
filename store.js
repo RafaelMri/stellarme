@@ -130,10 +130,12 @@ export const getReceiverAccountDetails = (
 
 export const sendPayment = (
   sourceSecretKey,
-  receiverPublicKey,
+  receiverPublicAddress,
   amount,
+  receiverMemo,
   cb
 ) => dispatch => {
+  const memoText = receiverMemo ? receiverMemo : '';
   // if (StellarSdk.StrKey.isValidEd25519PublicKey(receiverPublicKey)) {
   // console.log(sourceSecretKey, receiverPublicKey, amount);
   // Derive Keypair object and public key (that starts with a G) from the secret
@@ -158,7 +160,7 @@ export const sendPayment = (
         // Add a payment operation to the transaction
         .addOperation(
           StellarSdk.Operation.payment({
-            destination: receiverPublicKey,
+            destination: receiverPublicAddress,
             // The term native asset refers to lumens
             asset: StellarSdk.Asset.native(),
             // Specify 350.1234567 lumens. Lumens are divisible to seven digits past
@@ -168,7 +170,7 @@ export const sendPayment = (
           })
         )
         // Uncomment to add a memo (https://www.stellar.org/developers/learn/concepts/transactions.html)
-        // .addMemo(StellarSdk.Memo.text('Hello world!'))
+        .addMemo(StellarSdk.Memo.text(memoText))
         .build();
 
       // Sign this transaction with the secret key

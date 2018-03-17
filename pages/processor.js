@@ -24,7 +24,8 @@ class StellarMe extends React.Component {
       receiverAccountDetails: {
         receiverPublicAddress: "",
         receiverAmount: 1,
-        receiverAssetType: "XLM"
+        receiverAssetType: "XLM",
+        receiverMemo: "",
       },
       loaderInfo: {},
       transactionStep: 0
@@ -101,6 +102,15 @@ class StellarMe extends React.Component {
     });
   };
 
+  handleMemoChange = e => {
+    this.setState({
+      receiverAccountDetails: {
+        ...this.state.receiverAccountDetails,
+        receiverMemo: e.target.value
+      }
+    });
+  };
+
   handleTransaction = () => {
     console.log("in confirm trans");
     this.props.loaderStart("Processing Payment...");
@@ -108,6 +118,7 @@ class StellarMe extends React.Component {
       this.state.secretKey,
       this.state.receiverAccountDetails.receiverPublicAddress,
       this.state.receiverAccountDetails.receiverAmount,
+      this.state.receiverAccountDetails.receiverMemo,
       () =>
         this.setState(state => ({
           transactionStep: 3
@@ -201,7 +212,7 @@ class StellarMe extends React.Component {
         return (
           <div className="col-xs-12 col-md-12">
             <form>
-              <div class="form-group">
+              <div className="form-group">
                 <label htmlFor="txtSecretKey">Secret Key</label>
                 <input
                   required
@@ -269,6 +280,19 @@ class StellarMe extends React.Component {
                     ? this.state.loaderInfo.loaderText
                     : null}
                 </p>
+                <form>
+                  <div className="form-group">
+                    <label htmlFor="txtMemo">Memo (Optional)</label>
+                    <input
+                      required
+                      type="text"
+                      onChange={this.handleMemoChange}
+                      value={this.state.receiverAccountDetails.receiverMemo}
+                      className="form-control text-center"
+                      id="txtMemo"
+                    />
+                  </div>
+                </form>
                 <button
                   onClick={() => this.handleTransaction()}
                   className="btn btn-primary btn-lg btn-block"
@@ -397,7 +421,7 @@ class StellarMe extends React.Component {
                         onChange={this.handleReceiverAddressChange}
                       />
                     ) : (
-                      <p class="form-control-static">
+                      <p className="form-control-static">
                         {
                           this.state.receiverAccountDetails
                             .receiverPublicAddress
